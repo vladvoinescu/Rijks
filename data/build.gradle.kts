@@ -31,6 +31,8 @@ dependencies {
 
     api(project(":domain"))
 
+    api(libs.retrofit)
+
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
 
