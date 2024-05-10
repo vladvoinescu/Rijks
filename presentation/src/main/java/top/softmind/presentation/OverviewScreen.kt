@@ -17,7 +17,7 @@ fun OverviewScreen() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun OverviewScreenPreview() {
     OverviewScreen()
