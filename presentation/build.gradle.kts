@@ -57,7 +57,14 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.coil)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.core)
+    testImplementation(libs.junit.engine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
 
     debugImplementation(libs.androidx.ui.tooling)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

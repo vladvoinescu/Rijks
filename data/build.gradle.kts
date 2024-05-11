@@ -41,5 +41,12 @@ dependencies {
 
     implementation(libs.pagging)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.junit.core)
+    testImplementation(libs.junit.engine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
