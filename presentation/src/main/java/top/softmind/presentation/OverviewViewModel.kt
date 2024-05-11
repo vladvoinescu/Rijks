@@ -36,7 +36,7 @@ class OverviewViewModel(
 
 sealed interface OverviewState {
     data object InitialLoading: OverviewState
-    data class SubsequentialLoading(val list: List<ArtCollection>): OverviewState
-    data class Success(val list: List<ArtCollection>): OverviewState
+    data class SubsequentialLoading(val map: Map<String, List<ArtCollection>>): OverviewState
+    data class Success(val map: Map<String, List<ArtCollection>>): OverviewState
     data class Failure(val error: String): OverviewState
 }

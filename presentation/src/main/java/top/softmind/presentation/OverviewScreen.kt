@@ -1,14 +1,17 @@
 package top.softmind.presentation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -44,11 +47,11 @@ fun OverviewScreen(
             is OverviewState.SubsequentialLoading,
             is OverviewState.Success -> {
                 if (state is OverviewState.Success) {
-                    ArtCollectionList((state as OverviewState.Success).list)
+                    ArtCollectionList((state as OverviewState.Success).map)
                 }
                 if (state is OverviewState.SubsequentialLoading) {
                     ArtCollectionList(
-                        list = (state as OverviewState.SubsequentialLoading).list,
+                        map = (state as OverviewState.SubsequentialLoading).map,
                         isLoading = true
                     )
                 }
@@ -57,30 +60,53 @@ fun OverviewScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun ArtCollectionList(list: List<ArtCollection>, isLoading: Boolean = false) {
+internal fun ArtCollectionList(map: Map<String, List<ArtCollection>>, isLoading: Boolean = false) {
     LazyColumn {
-        items(
-            items = list,
-            key = { collection ->
-                collection.id.value
-            },
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    modifier = Modifier.size(80.dp),
-                    model = it.webImageUrl.value,
-                    contentScale = ContentScale.Crop,
-                    contentDescription = null,
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(text = it.title)
+        map.keys.forEach { artist ->
+            map[artist]?.let { artistCollection ->
+
+                stickyHeader {
+                    Box(
+                        contentAlignment = Alignment.CenterStart,
+                        modifier = Modifier
+                            .height(40.dp)
+                            .fillMaxWidth()
+                            .background(Color.Black)
+                            .padding(horizontal = 16.dp),
+                    ) {
+                        Text(text = artist, color = Color.White)
+                    }
+                }
+
+                itemsIndexed(
+                    items = artistCollection,
+                    key = { _, collection ->
+                        collection.id.value
+                    },
+                ) {index, item ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AsyncImage(
+                            modifier = Modifier.size(80.dp),
+                            model = item.webImageUrl.value,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null,
+                        )
+                        Spacer(modifier = Modifier.size(16.dp))
+                        Text(text = item.title)
+                    }
+                    if (index == artistCollection.lastIndex) {
+                        Spacer(modifier = Modifier.size(8.dp))
+                    } else {
+                        HorizontalDivider(
+                            color = Color.Black,
+                            thickness = 0.5.dp,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+                }
             }
-            HorizontalDivider(
-                color = Color.Black,
-                thickness = 0.5.dp,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
         }
         if (isLoading) {
             item {
@@ -99,19 +125,22 @@ internal fun ArtCollectionList(list: List<ArtCollection>, isLoading: Boolean = f
 @Composable
 private fun OverviewScreenPreview() {
     ArtCollectionList(
-        listOf(
-            ArtCollection(
-                id = ArtCollectionId("1"),
-                principalOrFirstMaker = "Van Gogh",
-                title = "Self Portrait",
-                webImageUrl = UrlAddress("")
-            ),
-            ArtCollection(
-                id = ArtCollectionId("2"),
-                principalOrFirstMaker = "Van Gogh",
-                title = "The Starry Night",
-                webImageUrl = UrlAddress("")
+        mapOf(
+            "Van Gogh" to listOf(
+                ArtCollection(
+                    id = ArtCollectionId("1"),
+                    principalOrFirstMaker = "Van Gogh",
+                    title = "Self Portrait",
+                    webImageUrl = UrlAddress("")
+                ),
+                ArtCollection(
+                    id = ArtCollectionId("2"),
+                    principalOrFirstMaker = "Van Gogh",
+                    title = "The Starry Night",
+                    webImageUrl = UrlAddress("")
+                )
             )
         )
+
     )
 }
