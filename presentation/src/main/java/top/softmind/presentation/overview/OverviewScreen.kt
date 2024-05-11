@@ -19,14 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.AsyncImage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.koin.androidx.compose.koinViewModel
@@ -34,6 +32,7 @@ import top.softmind.common.ArtCollectionId
 import top.softmind.common.UrlAddress
 import top.softmind.domain.module.ArtCollection
 import top.softmind.presentation.AppScreen
+import top.softmind.presentation.common.StatefulImage
 
 @Composable
 internal fun OverviewScreen(
@@ -109,11 +108,9 @@ private fun ArtCollectionItem(
                 onItemClick(item.id)
             },
         ) {
-            AsyncImage(
+            StatefulImage(
                 modifier = Modifier.size(80.dp),
-                model = item.webImageUrl.value,
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
+                webImageUrl = item.webImageUrl.value,
             )
             Spacer(modifier = Modifier.size(16.dp))
             Text(text = item.title)

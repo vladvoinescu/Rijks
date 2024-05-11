@@ -1,6 +1,5 @@
 package top.softmind.presentation.details
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,12 +17,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.ParametersHolder
 import top.softmind.domain.module.ArtCollectionDetails
+import top.softmind.presentation.common.StatefulImage
 
 @Composable
 internal fun DetailsSreen(
@@ -48,12 +46,9 @@ internal fun DetailsSreen(
 @Composable
 private fun DetailsSuccess(details: ArtCollectionDetails) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.LightGray),
-            model = details.webImageUrl.value,
-            contentDescription = null,
+        StatefulImage(
+            modifier = Modifier.fillMaxWidth(),
+            webImageUrl = details.webImageUrl.value,
         )
         Spacer(modifier = Modifier.size(16.dp))
         Text(text = details.description, color = MaterialTheme.colorScheme.onSurfaceVariant)
