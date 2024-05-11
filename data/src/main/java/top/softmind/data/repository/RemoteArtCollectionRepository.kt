@@ -1,6 +1,5 @@
 package top.softmind.data.repository
 
-import android.util.Log
 import top.softmind.common.ArtCollectionId
 import top.softmind.common.UrlAddress
 import top.softmind.data.api.ArtCollectionRemoteApi

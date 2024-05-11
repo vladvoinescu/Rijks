@@ -1,6 +1,5 @@
 package top.softmind.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,7 +8,6 @@ import kotlinx.coroutines.launch
 import top.softmind.common.ArtCollectionId
 import top.softmind.domain.module.ArtCollectionDetails
 import top.softmind.domain.usecase.GetArtCollectionDetailsUseCase
-import java.lang.Exception
 
 internal class DetailsViewModel(
     private val id: String,
