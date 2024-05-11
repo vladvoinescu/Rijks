@@ -1,9 +1,11 @@
 package top.softmind.data.model
 
-import top.softmind.common.ArtCollectionId
+internal data class ArtCollectionsResponseDto(
+    val artObjects: List<ArtCollectionDto>,
+)
 
 internal data class ArtCollectionDto(
-    val id: ArtCollectionId,
+    val id: String,
     val principalOrFirstMaker: String,
     val title: String,
     val webImage: WebImage,

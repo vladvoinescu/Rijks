@@ -32,6 +32,7 @@ dependencies {
     api(project(":domain"))
 
     api(libs.retrofit)
+    api(libs.retrofit.gson)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

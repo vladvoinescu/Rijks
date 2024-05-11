@@ -10,9 +10,9 @@ import top.softmind.domain.repository.ArtCollectionRepository
 internal class RemoteArtCollectionRepository(
     private val api: ArtCollectionRemoteApi
 ) : ArtCollectionRepository {
-    override suspend fun getArtCollections(page: Int) = api.getArtCollections(page).map {
+    override suspend fun getArtCollections(page: Int) = api.getArtCollections(page).artObjects.map {
         ArtCollection(
-            id = it.id,
+            id = ArtCollectionId(it.id),
             principalOrFirstMaker = it.principalOrFirstMaker,
             title = it.title,
             webImageUrl = UrlAddress(it.webImage.url)

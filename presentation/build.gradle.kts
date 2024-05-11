@@ -40,6 +40,7 @@ dependencies {
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
+    implementation(libs.koin.compose)
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.activity.compose)
@@ -49,6 +50,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.material)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.coil)
 
     testImplementation(libs.junit)
 
