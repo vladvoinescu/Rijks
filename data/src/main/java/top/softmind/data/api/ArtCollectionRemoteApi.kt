@@ -4,6 +4,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import top.softmind.data.model.ArtCollectionDetailsDto
+import top.softmind.data.model.ArtCollectionDetailsResponseDto
 import top.softmind.data.model.ArtCollectionsResponseDto
 
 internal interface ArtCollectionRemoteApi {
@@ -16,5 +17,5 @@ internal interface ArtCollectionRemoteApi {
     @GET("collection/{collectionId}?key=0fiuZFh4")
     suspend fun getArtCollectionsDetails(
         @Path("collectionId") collectionId: String
-    ): List<ArtCollectionDetailsDto>
+    ): ArtCollectionDetailsResponseDto
 }

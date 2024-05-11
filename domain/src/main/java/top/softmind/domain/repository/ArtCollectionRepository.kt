@@ -6,5 +6,5 @@ import top.softmind.domain.module.ArtCollectionDetails
 
 interface ArtCollectionRepository {
     suspend fun getArtCollections(page: Int = 0): List<ArtCollection>
-    suspend fun getArtCollectionDetails(id: ArtCollectionId): List<ArtCollectionDetails>
+    suspend fun getArtCollectionDetails(id: ArtCollectionId): ArtCollectionDetails
 }

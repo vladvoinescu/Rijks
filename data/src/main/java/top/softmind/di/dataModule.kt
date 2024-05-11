@@ -1,6 +1,7 @@
 package top.softmind.di
 
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -28,6 +29,14 @@ val dataModule = module {
     }
 
     single {
-        OkHttpClient.Builder().build()
+        OkHttpClient.Builder().apply {
+            addInterceptor(get<HttpLoggingInterceptor>())
+        }.build()
+    }
+
+    single {
+        HttpLoggingInterceptor().apply {
+            this.level = HttpLoggingInterceptor.Level.BODY
+        }
     }
 }

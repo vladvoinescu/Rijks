@@ -2,7 +2,9 @@ package top.softmind.presentation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import org.koin.androidx.compose.koinViewModel
 import top.softmind.common.ArtCollectionId
@@ -31,14 +34,14 @@ import top.softmind.common.UrlAddress
 import top.softmind.domain.module.ArtCollection
 
 @Composable
-fun OverviewScreen(
+internal fun OverviewScreen(
+    navController: NavHostController,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
     val state by viewModel.viewState.collectAsState()
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         when (state) {
@@ -47,13 +50,17 @@ fun OverviewScreen(
             is OverviewState.SubsequentialLoading,
             is OverviewState.Success -> {
                 if (state is OverviewState.Success) {
-                    ArtCollectionList((state as OverviewState.Success).map)
+                    ArtCollectionList((state as OverviewState.Success).map) { artCollectionId ->
+                        navController.navigate("${AppScreen.DETAILS.name}/${artCollectionId.value}")
+                    }
                 }
                 if (state is OverviewState.SubsequentialLoading) {
                     ArtCollectionList(
                         map = (state as OverviewState.SubsequentialLoading).map,
                         isLoading = true
-                    )
+                    ) { artCollectionId ->
+                        navController.navigate("${AppScreen.DETAILS.name}/${artCollectionId.value}")
+                    }
                 }
             }
         }
@@ -62,7 +69,11 @@ fun OverviewScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun ArtCollectionList(map: Map<String, List<ArtCollection>>, isLoading: Boolean = false) {
+private fun ArtCollectionList(
+    map: Map<String, List<ArtCollection>>,
+    isLoading: Boolean = false,
+    onItemClick: (ArtCollectionId) -> Unit,
+) {
     LazyColumn {
         map.keys.forEach { artist ->
             map[artist]?.let { artistCollection ->
@@ -85,26 +96,12 @@ internal fun ArtCollectionList(map: Map<String, List<ArtCollection>>, isLoading:
                     key = { _, collection ->
                         collection.id.value
                     },
-                ) {index, item ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        AsyncImage(
-                            modifier = Modifier.size(80.dp),
-                            model = item.webImageUrl.value,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = null,
-                        )
-                        Spacer(modifier = Modifier.size(16.dp))
-                        Text(text = item.title)
-                    }
-                    if (index == artistCollection.lastIndex) {
-                        Spacer(modifier = Modifier.size(8.dp))
-                    } else {
-                        HorizontalDivider(
-                            color = Color.Black,
-                            thickness = 0.5.dp,
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
-                    }
+                ) { index, item ->
+                    ArtCollectionItem(
+                        item = item,
+                        isLastInCategory = index == artistCollection.lastIndex,
+                        onItemClick = onItemClick
+                    )
                 }
             }
         }
@@ -117,6 +114,41 @@ internal fun ArtCollectionList(map: Map<String, List<ArtCollection>>, isLoading:
                     CircularProgressIndicator()
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ArtCollectionItem(
+    item: ArtCollection,
+    isLastInCategory: Boolean = false,
+    onItemClick: (ArtCollectionId) -> Unit
+) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Spacer(modifier = Modifier.size(4.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.clickable {
+                onItemClick(item.id)
+            },
+        ) {
+            AsyncImage(
+                modifier = Modifier.size(80.dp),
+                model = item.webImageUrl.value,
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(text = item.title)
+        }
+        if (isLastInCategory) {
+            Spacer(modifier = Modifier.size(8.dp))
+        } else {
+            Spacer(modifier = Modifier.size(4.dp))
+            HorizontalDivider(
+                color = Color.Black,
+                thickness = 0.5.dp,
+            )
         }
     }
 }
@@ -141,6 +173,5 @@ private fun OverviewScreenPreview() {
                 )
             )
         )
-
-    )
+    ) {}
 }

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
+import top.softmind.presentation.AppNavHost
 import top.softmind.presentation.OverviewScreen
 import top.softmind.rijks.ui.theme.RijksTheme
 
@@ -15,9 +17,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             RijksTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    OverviewScreen()
+                    AppNavHost()
                 }
             }
         }

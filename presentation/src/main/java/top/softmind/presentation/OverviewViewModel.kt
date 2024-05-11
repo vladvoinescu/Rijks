@@ -27,7 +27,6 @@ class OverviewViewModel(
                 val result = getArtCollectionsUseCase(page)
                 _viewState.value = OverviewState.Success(result)
             } catch(e: Exception) {
-                Log.e("DEBUGGING", e.localizedMessage ?: "UNKNOWN")
                 _viewState.value = OverviewState.Failure(e.localizedMessage ?: "UNKNOWN")
             }
         }

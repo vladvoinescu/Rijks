@@ -5,7 +5,7 @@ internal data class ArtCollectionsResponseDto(
 )
 
 internal data class ArtCollectionDto(
-    val id: String,
+    val objectNumber: String,
     val principalOrFirstMaker: String,
     val title: String,
     val webImage: WebImage,

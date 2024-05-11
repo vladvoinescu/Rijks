@@ -33,6 +33,8 @@ dependencies {
 
     api(libs.retrofit)
     api(libs.retrofit.gson)
+    api(libs.okhttp)
+    api(libs.okhttp.logging)
 
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)

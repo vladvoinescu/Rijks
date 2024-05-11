@@ -1,5 +1,6 @@
 package top.softmind.data.repository
 
+import android.util.Log
 import top.softmind.common.ArtCollectionId
 import top.softmind.common.UrlAddress
 import top.softmind.data.api.ArtCollectionRemoteApi
@@ -12,17 +13,19 @@ internal class RemoteArtCollectionRepository(
 ) : ArtCollectionRepository {
     override suspend fun getArtCollections(page: Int) = api.getArtCollections(page).artObjects.map {
         ArtCollection(
-            id = ArtCollectionId(it.id),
+            id = ArtCollectionId(it.objectNumber),
             principalOrFirstMaker = it.principalOrFirstMaker,
             title = it.title,
             webImageUrl = UrlAddress(it.webImage.url)
         )
     }
 
-    override suspend fun getArtCollectionDetails(id: ArtCollectionId) = api.getArtCollectionsDetails(id.value).map {
-        ArtCollectionDetails(
-            labelMakerLine = it.label.markerLine,
-            description = it.description
+    override suspend fun getArtCollectionDetails(id: ArtCollectionId): ArtCollectionDetails {
+        val result = api.getArtCollectionsDetails(id.value)
+        return ArtCollectionDetails(
+            labelMakerLine = result.artObject.label.makerLine,
+            description = result.artObject.description,
+            webImageUrl = UrlAddress(result.artObject.webImage.url)
         )
     }
 }
