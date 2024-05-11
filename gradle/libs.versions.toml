@@ -18,7 +18,7 @@ navigation = "2.7.7"
 pagging = "3.2.1"
 junit = "5.10.2"
 mockk = "1.13.10"
-coroutinesTest = "1.7.1"
+coroutinesTest = "1.8.0"
 
 [libraries]
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }

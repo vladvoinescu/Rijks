@@ -7,13 +7,23 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import top.softmind.data.api.ArtCollectionRemoteApi
+import top.softmind.data.mapper.ArtCollectionDetailsDomainMapper
+import top.softmind.data.mapper.ArtCollectionDomainMapper
 import top.softmind.data.repository.RemoteArtCollectionRepository
 import top.softmind.domain.repository.ArtCollectionRepository
 
 val dataModule = module {
 
+    single {
+        ArtCollectionDomainMapper()
+    }
+
+    single {
+        ArtCollectionDetailsDomainMapper()
+    }
+
     single<ArtCollectionRepository> {
-        RemoteArtCollectionRepository(get())
+        RemoteArtCollectionRepository(get(), get(), get())
     }
 
     single<ArtCollectionRemoteApi> {
