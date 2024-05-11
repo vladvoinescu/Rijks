@@ -1,4 +1,4 @@
-package top.softmind.presentation
+package top.softmind.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

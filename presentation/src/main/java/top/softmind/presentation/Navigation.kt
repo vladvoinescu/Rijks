@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import top.softmind.presentation.details.DetailsSreen
+import top.softmind.presentation.overview.OverviewScreen
 
 private const val ART_COLLECTION_ID_NAV_ARG_NAME = "artCollectionId"
 

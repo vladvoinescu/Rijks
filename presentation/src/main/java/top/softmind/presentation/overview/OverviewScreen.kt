@@ -1,4 +1,4 @@
-package top.softmind.presentation
+package top.softmind.presentation.overview
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -13,13 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,42 +23,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import org.koin.androidx.compose.koinViewModel
 import top.softmind.common.ArtCollectionId
 import top.softmind.common.UrlAddress
 import top.softmind.domain.module.ArtCollection
+import top.softmind.presentation.AppScreen
 
 @Composable
 internal fun OverviewScreen(
     navController: NavHostController,
     viewModel: OverviewViewModel = koinViewModel()
 ) {
-    val state by viewModel.viewState.collectAsState()
     Box(
         modifier = Modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        when (state) {
-            OverviewState.InitialLoading -> CircularProgressIndicator()
-            is OverviewState.Failure -> Text(text = "Technical error: ${(state as OverviewState.Failure).error}")
-            is OverviewState.SubsequentialLoading,
-            is OverviewState.Success -> {
-                if (state is OverviewState.Success) {
-                    ArtCollectionList((state as OverviewState.Success).map) { artCollectionId ->
-                        navController.navigate("${AppScreen.DETAILS.name}/${artCollectionId.value}")
-                    }
-                }
-                if (state is OverviewState.SubsequentialLoading) {
-                    ArtCollectionList(
-                        map = (state as OverviewState.SubsequentialLoading).map,
-                        isLoading = true
-                    ) { artCollectionId ->
-                        navController.navigate("${AppScreen.DETAILS.name}/${artCollectionId.value}")
-                    }
-                }
-            }
+        ArtCollectionList(artCollection = viewModel.artCollections) { artCollectionId ->
+            navController.navigate("${AppScreen.DETAILS.name}/${artCollectionId.value}")
         }
     }
 }
@@ -70,14 +54,20 @@ internal fun OverviewScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ArtCollectionList(
-    map: Map<String, List<ArtCollection>>,
-    isLoading: Boolean = false,
+    artCollection: Flow<PagingData<ArtCollection>>,
     onItemClick: (ArtCollectionId) -> Unit,
 ) {
-    LazyColumn {
-        map.keys.forEach { artist ->
-            map[artist]?.let { artistCollection ->
+    val artCollectionItems: LazyPagingItems<ArtCollection> = artCollection.collectAsLazyPagingItems()
 
+    LazyColumn {
+        val itemCount = artCollectionItems.itemCount
+        var lastItem: ArtCollection? = null
+
+        for (index in 0 until itemCount) {
+
+            val currentItem = artCollectionItems.peek(index)
+
+            if (currentItem != null && lastItem?.principalOrFirstMaker != currentItem.principalOrFirstMaker) {
                 stickyHeader {
                     Box(
                         contentAlignment = Alignment.CenterStart,
@@ -87,33 +77,20 @@ private fun ArtCollectionList(
                             .background(Color.Black)
                             .padding(horizontal = 16.dp),
                     ) {
-                        Text(text = artist, color = Color.White)
+                        Text(text = currentItem.principalOrFirstMaker, color = Color.White)
                     }
                 }
+            }
 
-                itemsIndexed(
-                    items = artistCollection,
-                    key = { _, collection ->
-                        collection.id.value
-                    },
-                ) { index, item ->
-                    ArtCollectionItem(
-                        item = item,
-                        isLastInCategory = index == artistCollection.lastIndex,
-                        onItemClick = onItemClick
-                    )
-                }
-            }
-        }
-        if (isLoading) {
             item {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator()
+                artCollectionItems[index]?.let { item ->
+                    ArtCollectionItem(item) { id ->
+                        onItemClick(id)
+                    }
                 }
             }
+
+            lastItem = currentItem
         }
     }
 }
@@ -156,22 +133,18 @@ private fun ArtCollectionItem(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun OverviewScreenPreview() {
-    ArtCollectionList(
-        mapOf(
-            "Van Gogh" to listOf(
-                ArtCollection(
-                    id = ArtCollectionId("1"),
-                    principalOrFirstMaker = "Van Gogh",
-                    title = "Self Portrait",
-                    webImageUrl = UrlAddress("")
-                ),
-                ArtCollection(
-                    id = ArtCollectionId("2"),
-                    principalOrFirstMaker = "Van Gogh",
-                    title = "The Starry Night",
-                    webImageUrl = UrlAddress("")
-                )
-            )
+    ArtCollectionList(flowOf(PagingData.from(listOf(
+            ArtCollection(
+                id = ArtCollectionId("1"),
+                principalOrFirstMaker = "Van Gogh",
+                title = "Self Portrait",
+                webImageUrl = UrlAddress("")
+            ),
+        ArtCollection(
+            id = ArtCollectionId("2"),
+            principalOrFirstMaker = "Van Gogh",
+            title = "The Starry Night",
+            webImageUrl = UrlAddress("")
         )
-    ) {}
+    )))) {}
 }
