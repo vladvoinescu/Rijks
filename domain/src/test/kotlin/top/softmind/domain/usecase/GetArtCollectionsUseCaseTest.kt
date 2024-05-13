@@ -21,7 +21,7 @@ private const val MAKER_B = "B"
 
 class GetArtCollectionsUseCaseTest {
 
-    private val repository = mockk< ArtCollectionRepository>()
+    private val repository = mockk<ArtCollectionRepository>()
     private lateinit var useCase: GetArtCollectionsUseCase
 
     @BeforeEach
